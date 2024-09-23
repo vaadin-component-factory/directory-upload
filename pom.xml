@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vaadin.addons.componentfactory</groupId>
-    <artifactId>vcf-template-parent</artifactId>
+    <artifactId>directory-upload-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Template Addon Parent</name>
+    <name>Directory Upload Addon Parent</name>
 
     <organization>
         <name>Vaadin Ltd</name>
@@ -36,7 +36,7 @@
     </licenses>
 
     <modules>
-        <module>vcf-template</module>
-        <module>vcf-template-demo</module>
+        <module>directory-upload</module>
+        <module>directory-upload-demo</module>
     </modules>
 </project>
