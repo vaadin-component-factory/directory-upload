@@ -4,19 +4,6 @@ import '@vaadin/upload/src/vaadin-upload-mixin.js';
 	window.directoryUploadMixinconnector = {
 		initLazy: (customUpload) => {
 			
-			function transverseDirectory(item) {
-				if (item.isFile) {
-					customUpload._uploadFile(item.file());
-				}
-				if (item.isDirectory) {
-					item.createReader().readEntries((entries) => {
-					      entries.forEach((entry) => {
-							transverseDirectory(entry);
-						});
-					});
-				}
-			};
-
 			// Override _uploadFile to handle passing of full path from webkitRelativePath
 			customUpload._uploadFile = (file) => {
 				if (file.uploading) {
@@ -145,6 +132,19 @@ import '@vaadin/upload/src/vaadin-upload-mixin.js';
 					xhr.send(formData);
 				}
 			}
+			
+			function transverseDirectory(item) {
+							if (item.isFile) {
+								item.file((file) => customUpload._addFile(file));
+							}
+							if (item.isDirectory) {
+								item.createReader().readEntries((entries) => {
+								      entries.forEach((entry) => {
+										transverseDirectory(entry);
+									});
+								});
+							}
+						};
 
 			// Overriding onDrop to obtain file objects with full path information
 			customUpload._onDrop = (event) => {
@@ -161,6 +161,8 @@ import '@vaadin/upload/src/vaadin-upload-mixin.js';
 				}
 			}
 			customUpload.shadowRoot.querySelector('input').setAttribute("webkitDirectory", "");
+			customUpload.removeEventListener('drop', customUpload._onDrop);
+			customUpload.addEventListener('drop', customUpload._onDrop.bind(customUpload));
 		}
 	}
 })();
