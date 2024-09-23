@@ -39,3 +39,4 @@ vcf-template-demo/src/main/bundles
 .classpath
 .project
 .idea
+/directory-upload-demo/node_modules
