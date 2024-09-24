@@ -1,4 +1,6 @@
 import '@vaadin/upload/src/vaadin-upload-mixin.js';
+import '@vaadin/upload/src/vaadin-upload-file-list-mixin.js';
+import { html, render } from 'lit';
 
 (function() {
 	window.directoryUploadMixinconnector = {
@@ -101,7 +103,6 @@ import '@vaadin/upload/src/vaadin-upload-mixin.js';
 				if (!evt) {
 					return;
 				}
-				console.log(file.webkitRelativePath);
 				formData.append(file.formDataName, file, file.webkitRelativePath);
 
 				xhr.open(customUpload.method, file.uploadTarget, true);
@@ -163,6 +164,40 @@ import '@vaadin/upload/src/vaadin-upload-mixin.js';
 			customUpload.shadowRoot.querySelector('input').setAttribute("webkitDirectory", "");
 			customUpload.removeEventListener('drop', customUpload._onDrop);
 			customUpload.addEventListener('drop', customUpload._onDrop.bind(customUpload));
+			
+			setTimeout(() => {
+
+				var uploadList = customUpload.querySelector('vaadin-upload-file-list');
+
+				uploadList.requestContentUpdate = () => {
+				      const { items, i18n } = uploadList;
+
+				      render(
+				        html`
+				          ${items.map(
+				            (file) => html`
+				              <li>
+				                <vaadin-upload-file
+				                  .file="${file}"
+				                  .complete="${file.complete}"
+				                  .errorMessage="${file.error}"
+				                  .fileName="${file.webkitRelativePath}"
+				                  .held="${file.held}"
+				                  .indeterminate="${file.indeterminate}"
+				                  .progress="${file.progress}"
+				                  .status="${file.status}"
+				                  .uploading="${file.uploading}"
+				                  .i18n="${i18n}"
+				                ></vaadin-upload-file>
+				              </li>
+				            `,
+				          )}
+				        `,
+				        uploadList,
+				      );
+				    }
+			});
+			
 		}
 	}
 })();
