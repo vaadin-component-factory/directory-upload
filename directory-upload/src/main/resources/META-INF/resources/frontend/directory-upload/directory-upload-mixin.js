@@ -136,7 +136,12 @@ import { html, render } from 'lit';
 			
 			function transverseDirectory(item) {
 							if (item.isFile) {
-								item.file((file) => customUpload._addFile(file));
+								item.file((file) => {
+									Object.defineProperty(file, 'webkitRelativePath', {
+									      value: item.fullPath,
+									    });
+									customUpload._addFile(file);
+									});
 							}
 							if (item.isDirectory) {
 								item.createReader().readEntries((entries) => {
