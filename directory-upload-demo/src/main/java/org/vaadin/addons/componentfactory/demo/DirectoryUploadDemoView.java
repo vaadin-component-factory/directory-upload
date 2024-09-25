@@ -25,7 +25,7 @@ import com.vaadin.flow.router.Route;
 import org.vaadin.addons.componentfactory.directoryupload.DirectoryUpload;
 
 /**
- * View for {@link PaperInput} demo.
+ * View for {@link DirectoryUpload} demo.
  *
  * @author Vaadin Ltd
  */
@@ -43,7 +43,7 @@ public class DirectoryUploadDemoView extends DemoView {
       final Div message = createMessageDiv("directory-upload-demo-message");
 
         // begin-source-example
-        // source-example-heading: Simple paper input
+        // source-example-heading: Simple directory upload
       final DirectoryUpload upload = new DirectoryUpload(new MultiFileBuffer(e -> {
         add(new Span(e));
         return new TemporaryFileFactory().createFile(e);
