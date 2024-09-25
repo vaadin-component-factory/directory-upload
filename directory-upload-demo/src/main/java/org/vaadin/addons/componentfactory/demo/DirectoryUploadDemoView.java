@@ -15,6 +15,7 @@
  */
 package org.vaadin.addons.componentfactory.demo;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.upload.receivers.MultiFileBuffer;
@@ -47,10 +48,12 @@ public class DirectoryUploadDemoView extends DemoView {
         add(new Span(e));
         return new TemporaryFileFactory().createFile(e);
       }));
+      upload.setAutoUpload(false);
         // end-source-example
 
 
-      addCard("Directory upload", upload, message);
+      addCard("Directory upload", upload, message,
+          new Button("Trigger upload", e -> upload.uploadPendingFiles()));
     }
 
 

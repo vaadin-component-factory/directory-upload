@@ -31,4 +31,11 @@ public class DirectoryUpload extends Upload {
     this.getElement().executeJs("directoryUploadMixinconnector.initLazy($0)", this.getElement());
   }
 
+  /**
+   * Trigger uploading all pending files
+   */
+  public void uploadPendingFiles() {
+    this.getElement().executeJs("this.uploadFiles()");
+  }
+
 }
