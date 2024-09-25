@@ -38,7 +38,7 @@ public class DirectoryUploadTest {
     }
 
     @Test
-    public void paperInput_basicCases() {
+    public void directoryUpload_basicCases() {
       // TODO figure test
     }
 

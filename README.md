@@ -1,12 +1,12 @@
-# Template Addon for Vaadin Flow
+# Directory Upload Addon for Vaadin Flow
 
-This project is a template for building new Vaadin Flow addons
+This project is a Upload extension that handles uploading of directories, by using the file explorer selection window or drag and drop.
 
 This component is part of Vaadin Component Factory
 
 ## Running the component demo
 Run from the command line:
-- `mvn  -pl vcf-template-demo -Pwar install jetty:run`
+- `mvn  -pl directory-upload-demo -Pwar install jetty:run`
 
 Then navigate to `http://localhost:8080/`
 
@@ -27,13 +27,13 @@ add the following dependency to your `pom.xml`:
 ```
 <dependency>
     <groupId>org.vaadin.addons.componentfactory</groupId>
-    <artifactId>vcf-template</artifactId>
+    <artifactId>directory-upload</artifactId>
     <version>${component.version}</version>
 </dependency>
 ```
 
 ## Flow documentation
-Documentation for flow can be found in [Flow documentation](https://vaadin.com/docs/v14/flow/overview).
+Documentation for flow can be found in [Flow documentation](https://vaadin.com/docs/latest/flow/).
 
 ## License
 
