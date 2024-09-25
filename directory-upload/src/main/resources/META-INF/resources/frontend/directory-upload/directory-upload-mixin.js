@@ -138,7 +138,7 @@ import { html, render } from 'lit';
 							if (item.isFile) {
 								item.file((file) => {
 									Object.defineProperty(file, 'webkitRelativePath', {
-									      value: item.fullPath,
+									      value: item.fullPath.charAt(0) == "/" ? item.fullPath.substring(1, item.fullPath.length) : item.fullPath
 									    });
 									customUpload._addFile(file);
 									});
@@ -151,11 +151,13 @@ import { html, render } from 'lit';
 								});
 							}
 						};
-
+						
+		
 			// Overriding onDrop to obtain file objects with full path information
 			customUpload._onDrop = (event) => {
 				if (!customUpload.nodrop) {
 					event.preventDefault();
+					event.stopPropagation();
 					customUpload._dragover = customUpload._dragoverValid = false;
 					var items = event.dataTransfer.items;
 					for (let i = 0; i < items.length; i++) {
@@ -167,8 +169,7 @@ import { html, render } from 'lit';
 				}
 			}
 			customUpload.shadowRoot.querySelector('input').setAttribute("webkitDirectory", "");
-			customUpload.removeEventListener('drop', customUpload._onDrop);
-			customUpload.addEventListener('drop', customUpload._onDrop.bind(customUpload));
+			customUpload.addEventListener('drop', customUpload._onDrop.bind(customUpload), true);
 			
 			setTimeout(() => {
 
