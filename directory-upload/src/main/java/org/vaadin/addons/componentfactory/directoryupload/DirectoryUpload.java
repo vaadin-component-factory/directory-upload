@@ -22,6 +22,8 @@ import com.vaadin.flow.component.upload.Upload;
 @JsModule("./directory-upload/directory-upload-mixin.js")
 public class DirectoryUpload extends Upload {
 
+  private int maxConnections = 1;
+
   public DirectoryUpload() {
   }
 
@@ -47,7 +49,8 @@ public class DirectoryUpload extends Upload {
   @Override
   protected void onAttach(final AttachEvent attachEvent) {
     super.onAttach(attachEvent);
-    this.getElement().executeJs("directoryUploadMixinconnector.initLazy($0)", this.getElement());
+    this.getElement().executeJs("directoryUploadMixinconnector.initLazy($0, $1)", this.getElement(),
+        maxConnections);
   }
 
   /**
@@ -55,6 +58,19 @@ public class DirectoryUpload extends Upload {
    */
   public void uploadPendingFiles() {
     this.getElement().executeJs("this.uploadFiles()");
+  }
+
+  /**
+   * Number of simultaneous connections when uploading, defaults to 1
+   *
+   * @param maxConnections
+   */
+  public void setMaxConnections(final int maxConnections) {
+    this.maxConnections = maxConnections;
+  }
+
+  public int getMaxConnections() {
+    return maxConnections;
   }
 
 }

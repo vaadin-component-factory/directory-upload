@@ -4,7 +4,33 @@ import { html, render } from 'lit';
 
 (function() {
 	window.directoryUploadMixinconnector = {
-		initLazy: (customUpload) => {
+		initLazy: (customUpload, maxConnections) => {
+			
+			const MAX_CONNECTIONS = maxConnections;
+            customUpload.queueNext = () => {
+                const numConnections = customUpload.files.filter(file => file.uploading).length;
+                if(numConnections < MAX_CONNECTIONS) {
+                // reverse to pick next in selection order
+                    const nextFileToUpload = customUpload.files.slice().reverse().find(file => file.held)
+                    if (nextFileToUpload) {
+                        customUpload.uploadFiles(nextFileToUpload)
+                    }
+                }
+            }
+            
+            // start uploading next file in queue when a file is successfully uploaded
+            customUpload.addEventListener('upload-success', e => {
+                customUpload.queueNext();
+            });
+            
+            // start uploading next file in queue also when there is an error when uploading the file
+            customUpload.addEventListener('upload-error', () => {
+                customUpload.queueNext();
+            });
+            
+            customUpload.addEventListener('files-changed', (event) => {
+                customUpload.queueNext();
+            });
 			
 			// Override _uploadFile to handle passing of full path from webkitRelativePath
 			customUpload._uploadFile = (file) => {
