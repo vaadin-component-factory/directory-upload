@@ -29,8 +29,8 @@ directory-upload-demo/webpack.generated.js
 directory-upload-demo/target/classes/META-INF/VAADIN/config/flow-build-info.json
 directory-upload-demo/node_modules
 directory-upload-demo/package-lock.json
-directory-upload-demo/frontend/generated
-directory-upload-demo/frontend/index.html
+directory-upload-demo/src/main/frontend/generated
+directory-upload-demo/src/main/frontend/index.html
 directory-upload-demo/src/main/bundles
 
 # ide configurations
