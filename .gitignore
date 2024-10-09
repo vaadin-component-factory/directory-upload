@@ -39,3 +39,4 @@ directory-upload-demo/src/main/bundles
 .classpath
 .project
 .idea
+.vscode
