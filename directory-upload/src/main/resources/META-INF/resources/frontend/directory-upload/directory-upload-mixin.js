@@ -203,10 +203,12 @@ import { html, render } from 'lit';
 
 			uploadList.requestContentUpdate = () => {
 			      const { items, i18n } = uploadList;
-
+                  items.sort(function(a,b) {
+                      return (a.webkitRelativePath + a.name).localeCompare(b.webkitRelativePath + b.name);
+                  });
 			      render(
 			        html`
-			          ${items.map(
+			          ${items.sort().map(
 			            (file) => html`
 			              <li>
 			                <vaadin-upload-file
