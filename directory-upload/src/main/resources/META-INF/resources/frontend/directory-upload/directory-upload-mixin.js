@@ -28,12 +28,14 @@ import { html, render } from 'lit';
                 customUpload.queueNext();
             });
             
-            customUpload.addEventListener('files-changed', (event) => {
-                customUpload.queueNext();
-            });
-			
 			// Override _uploadFile to handle passing of full path from webkitRelativePath
 			customUpload._uploadFile = (file) => {
+                
+                const numConnections = customUpload.files.filter(file => file.uploading).length;
+                if(numConnections >= MAX_CONNECTIONS) {
+                    return;
+                }
+                
 				if (file.uploading) {
 					return;
 				}
