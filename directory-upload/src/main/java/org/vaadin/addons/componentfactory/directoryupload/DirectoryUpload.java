@@ -20,6 +20,7 @@ import com.vaadin.flow.component.upload.MultiFileReceiver;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.Upload;
 
+@SuppressWarnings("serial")
 @JsModule("./directory-upload/directory-upload-mixin.js")
 @CssImport("./directory-upload/styles/styles.css")
 public class DirectoryUpload extends Upload {
