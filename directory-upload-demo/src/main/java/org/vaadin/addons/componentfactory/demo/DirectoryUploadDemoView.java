@@ -50,8 +50,8 @@ public class DirectoryUploadDemoView extends DemoView {
         return new TemporaryFileFactory().createFile(e);
       }));
       upload.setAutoUpload(false);
+      upload.setPlayButtonVisible(false);
         // end-source-example
-
 
         addCard("Simple directory upload", upload, message,
           new Button("Trigger upload", e -> upload.uploadPendingFiles()));

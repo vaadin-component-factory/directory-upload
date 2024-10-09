@@ -14,12 +14,14 @@
 package org.vaadin.addons.componentfactory.directoryupload;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.upload.MultiFileReceiver;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.Upload;
 
 @JsModule("./directory-upload/directory-upload-mixin.js")
+@CssImport("./directory-upload/styles/styles.css")
 public class DirectoryUpload extends Upload {
 
   private int maxConnections = 1;
@@ -71,6 +73,28 @@ public class DirectoryUpload extends Upload {
 
   public int getMaxConnections() {
     return maxConnections;
+  }
+  
+  /**
+   * Configures the play button for the files to be uploaded visibility
+   * 
+   * @param playButtonVisible true (default) to make the play button visible, false otherwise
+   */
+  public void setPlayButtonVisible(final boolean playButtonVisible) {
+    if (playButtonVisible) {
+      this.removeClassName("hide-play-button");
+    } else {
+      this.addClassName("hide-play-button");
+    }
+  }
+
+  /**
+   * Returns the play button for the files to be uploaded visibility
+   * 
+   * @return true if the play button is visible, false otherwise
+   */
+  public boolean isPlayButtonVisible() {
+    return !this.hasClassName("hide-play-button");
   }
 
 }

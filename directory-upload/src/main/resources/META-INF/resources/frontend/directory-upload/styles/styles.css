@@ -1,0 +1,3 @@
+.hide-play-button vaadin-upload-file::part(start-button) {
+	display:none;
+}
