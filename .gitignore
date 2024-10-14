@@ -32,6 +32,11 @@ directory-upload-demo/package-lock.json
 directory-upload-demo/src/main/frontend/generated
 directory-upload-demo/src/main/frontend/index.html
 directory-upload-demo/src/main/bundles
+directory-upload-demo/vite.config.ts
+directory-upload-demo/vite.generated.ts
+directory-upload-demo/types.d.ts
+directory-upload-demo/tsconfig.json
+
 
 # ide configurations
 .vscode/settings.json
