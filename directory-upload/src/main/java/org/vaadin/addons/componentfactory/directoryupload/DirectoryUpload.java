@@ -14,11 +14,19 @@
 package org.vaadin.addons.componentfactory.directoryupload;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.upload.MultiFileReceiver;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.shared.Registration;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
+import elemental.json.JsonValue;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 @JsModule("./directory-upload/directory-upload-mixin.js")
@@ -26,6 +34,7 @@ import com.vaadin.flow.component.upload.Upload;
 public class DirectoryUpload extends Upload {
 
   private int maxConnections = 1;
+  private final List<ComponentEventListener<FilesSelectedEvent>> filesSelectedListeners = new ArrayList<>();
 
   public DirectoryUpload() {
   }
@@ -97,5 +106,62 @@ public class DirectoryUpload extends Upload {
   public boolean isPlayButtonVisible() {
     return !this.hasClassName("hide-play-button");
   }
+  
+  /**
+   * Informs a set of files selected to be uploaded
+   * 
+   * @param filesJsonValue
+   */
+  @ClientCallable
+  public void setFilesToBeUploaded(JsonValue filesJsonValue) {
+    List<File> files = parseJsonToFileList(filesJsonValue);
 
+    fireFilesSelectedEvent(files);
+  }
+  
+  /**
+   * Marks a given file with a validation error
+   * 
+   * @param file
+   * @param error
+   */
+  public void markFileWithError(File file, String error) {
+    getElement().executeJs("""
+        requestAnimationFrame(function(){
+          const file = Array.from(this.files).find(file => file.name === $1);
+          file.error=$0;
+          this.files=Array.from(this.files);
+      }.bind(this))""", error, file.getName());
+  }
+  
+  private void fireFilesSelectedEvent(List<File> files) {
+      FilesSelectedEvent event = new FilesSelectedEvent(this, files);
+      for (ComponentEventListener<FilesSelectedEvent> listener : filesSelectedListeners) {
+          listener.onComponentEvent(event);
+      }
+  }
+  
+  private List<File> parseJsonToFileList(JsonValue jsonValue) {
+    List<File> files = new ArrayList<>();
+    if (jsonValue instanceof JsonArray) {
+        JsonArray jsonArray = (JsonArray) jsonValue;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JsonObject jsonObject = jsonArray.getObject(i);
+            String name = jsonObject.getString("name");
+            long size = (long) jsonObject.getNumber("size");
+            String type = jsonObject.getString("type");
+            long lastModified = (long) jsonObject.getNumber("lastModified");
+
+            File file = new File(name, size, type, lastModified);
+            files.add(file);
+        }
+    }
+    return files;
+  }
+  
+  public Registration addFilesSelectedListener(ComponentEventListener<FilesSelectedEvent> listener) {
+      filesSelectedListeners.add(listener);
+      return () -> filesSelectedListeners.remove(listener);
+  }
+  
 }

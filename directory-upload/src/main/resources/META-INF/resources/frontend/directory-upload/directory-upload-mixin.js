@@ -1,11 +1,12 @@
 import '@vaadin/upload/src/vaadin-upload-mixin.js';
 import '@vaadin/upload/src/vaadin-upload-file-list-mixin.js';
+import { Debouncer } from '@vaadin/component-base/src/debounce.js';
+import { timeOut } from '@vaadin/component-base/src/async.js';
 import { html, render } from 'lit';
 
 (function() {
 	window.directoryUploadMixinconnector = {
 		initLazy: (customUpload, maxConnections) => {
-			
 			const MAX_CONNECTIONS = maxConnections;
             customUpload.queueNext = () => {
                 const numConnections = customUpload.files.filter(file => file.uploading).length;
@@ -26,6 +27,64 @@ import { html, render } from 'lit';
             // start uploading next file in queue also when there is an error when uploading the file
             customUpload.addEventListener('upload-error', () => {
                 customUpload.queueNext();
+            });
+            
+            var serializableArray;
+            customUpload.addEventListener('files-changed', (event) => {
+                if (customUpload.noAuto) {
+                    const timeout = 500;
+                    customUpload._debounceFilesChanged = Debouncer.debounce(customUpload._debounceFilesChanged, timeOut.after(timeout), () => {
+                      debugger;
+                      let newSerializableArray = Array.from(customUpload.files).map(file => {
+                        return {
+                          name: file.name,
+                          size: file.size,
+                          type: file.type,
+                          lastModified: file.lastModified
+                        };
+                      });
+                      
+                      let sendToServer = false;
+                      
+                      if (serializableArray==null) {
+                        sendToServer = true;
+                      } else {
+                        if (serializableArray.length !== newSerializableArray.length) {
+                            sendToServer = true;
+                        } else {
+                            const arr1 = Array.from(serializableArray).sort((a, b) => 
+                                a.name.localeCompare(b.name) || 
+                                a.size - b.size || 
+                                a.type.localeCompare(b.type) || 
+                                a.lastModified - b.lastModified
+                            );
+    
+                            const arr2 = Array.from(newSerializableArray).sort((a, b) => 
+                                a.name.localeCompare(b.name) || 
+                                a.size - b.size || 
+                                a.type.localeCompare(b.type) || 
+                                a.lastModified - b.lastModified
+                            );
+    
+                            for (let i = 0; i < arr1.length; i++) {
+                                if (
+                                    arr1[i].name !== arr2[i].name ||
+                                    arr1[i].size !== arr2[i].size ||
+                                    arr1[i].type !== arr2[i].type ||
+                                    arr1[i].lastModified !== arr2[i].lastModified
+                                ) {
+                                    sendToServer = true;
+                                }
+                            }
+                        }
+                      }
+                      
+                      if (sendToServer) {
+                          serializableArray = newSerializableArray;
+                          customUpload.$server.setFilesToBeUploaded(serializableArray);
+                      }
+                    });
+                }
             });
             
 			// Override _uploadFile to handle passing of full path from webkitRelativePath

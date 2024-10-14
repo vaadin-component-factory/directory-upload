@@ -19,9 +19,11 @@ import com.vaadin.flow.component.upload.receivers.MultiFileBuffer;
 import com.vaadin.flow.component.upload.receivers.TemporaryFileFactory;
 import com.vaadin.flow.demo.DemoView;
 import com.vaadin.flow.router.Route;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addons.componentfactory.directoryupload.DirectoryUpload;
+import org.vaadin.addons.componentfactory.directoryupload.File;
 
 /**
  * View for {@link DirectoryUpload} demo.
@@ -51,6 +53,15 @@ public class DirectoryUploadDemoView extends DemoView {
       }));
       upload.setAutoUpload(false);
       upload.setPlayButtonVisible(false);
+      upload.addFilesSelectedListener(event -> {
+        List<File> files = event.getFiles();
+        // Validar archivos aquí
+        files.forEach(file -> {
+          if (file.getName().contains("!")) {
+            upload.markFileWithError(file, "contains illegal characters");
+          }
+        });
+      });
         // end-source-example
 
         addCard("Simple directory upload", upload, message,
