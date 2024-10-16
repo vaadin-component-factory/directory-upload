@@ -34,7 +34,6 @@ import { html, render } from 'lit';
                 if (customUpload.noAuto) {
                     const timeout = 500;
                     customUpload._debounceFilesChanged = Debouncer.debounce(customUpload._debounceFilesChanged, timeOut.after(timeout), () => {
-                      debugger;
                       let newSerializableArray = Array.from(customUpload.files).map(file => {
                         return {
                           name: file.name,
