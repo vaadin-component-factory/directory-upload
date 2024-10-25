@@ -36,7 +36,7 @@ import { html, render } from 'lit';
                     customUpload._debounceFilesChanged = Debouncer.debounce(customUpload._debounceFilesChanged, timeOut.after(timeout), () => {
                       let newSerializableArray = Array.from(customUpload.files).map(file => {
                         return {
-                          name: file.name,
+                          name: file.webkitRelativePath,
                           size: file.size,
                           type: file.type,
                           lastModified: file.lastModified
