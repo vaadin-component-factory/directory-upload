@@ -128,7 +128,7 @@ public class DirectoryUpload extends Upload {
   public void markFileWithError(File file, String error) {
     getElement().executeJs("""
         requestAnimationFrame(function(){
-          const file = Array.from(this.files).find(file => file.name === $1);
+          const file = Array.from(this.files).find(file => file.webkitRelativePath === $1);
           file.error=$0;
           this.files=Array.from(this.files);
       }.bind(this))""", error, file.getName());
