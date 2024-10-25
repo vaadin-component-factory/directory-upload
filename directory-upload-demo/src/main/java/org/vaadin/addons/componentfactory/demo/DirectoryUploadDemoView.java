@@ -53,9 +53,9 @@ public class DirectoryUploadDemoView extends DemoView {
       }));
       upload.setAutoUpload(false);
       upload.setPlayButtonVisible(false);
+      upload.setRetryButtonVisible(false);
       upload.addFilesSelectedListener(event -> {
         List<File> files = event.getFiles();
-        // Validar archivos aquí
         files.forEach(file -> {
           if (file.getName().contains("!")) {
             upload.markFileWithError(file, "contains illegal characters");

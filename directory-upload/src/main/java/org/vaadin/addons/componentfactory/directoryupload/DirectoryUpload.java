@@ -107,6 +107,29 @@ public class DirectoryUpload extends Upload {
     return !this.hasClassName("hide-play-button");
   }
   
+  
+  /**
+   * Configures the Retry button for the files to be uploaded visibility
+   * 
+   * @param retryButtonVisible true (default) to make the retry button visible, false otherwise
+   */
+  public void setRetryButtonVisible(final boolean retryButtonVisible) {
+    if (retryButtonVisible) {
+      this.removeClassName("hide-retry-button");
+    } else {
+      this.addClassName("hide-retry-button");
+    }
+  }
+
+  /**
+   * Returns the Retry button for the files to be uploaded visibility
+   * 
+   * @return true if the Retry button is visible, false otherwise
+   */
+  public boolean isRetryButtonVisible() {
+    return !this.hasClassName("hide-retry-button");
+  }
+  
   /**
    * Informs a set of files selected to be uploaded
    * 
