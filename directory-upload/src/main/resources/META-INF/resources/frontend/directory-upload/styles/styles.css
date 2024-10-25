@@ -1,3 +1,7 @@
 .hide-play-button vaadin-upload-file::part(start-button) {
 	display:none;
 }
+
+.hide-retry-button vaadin-upload-file::part(retry-button) {
+    display:none;
+}
