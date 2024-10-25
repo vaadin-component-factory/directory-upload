@@ -54,6 +54,7 @@ public class DirectoryUploadDemoView extends DemoView {
       upload.setAutoUpload(false);
       upload.setPlayButtonVisible(false);
       upload.setRetryButtonVisible(false);
+      upload.setMaxConnections(2);
       upload.addFilesSelectedListener(event -> {
         List<File> files = event.getFiles();
         files.forEach(file -> {
