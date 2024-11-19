@@ -2,7 +2,7 @@
 
 This project is a Upload extension that handles uploading of directories, by using the file explorer selection window or drag and drop.
 
-This component is part of Vaadin Component Factory
+This component is part of Vaadin Component Factory.
 
 ## Features
 
@@ -23,10 +23,10 @@ Run from the command line:
 
 ## Profiles
 ### Profile "directory"
-This profile, when enabled, will create the zip file for uploading to Vaadin's directory
+This profile, when enabled, will create the zip file for uploading to Vaadin's directory.
 
 ### Profile "production"
-This profile, when enabled, will execute a production build for the demo
+This profile, when enabled, will execute a production build for the demo.
 
 ## Using the component in a Flow application
 To use the component in an application using maven,
@@ -64,4 +64,7 @@ Documentation for flow can be found in [Flow documentation](https://vaadin.com/d
 
 ## License
 
-Apache Licence 2
+Apache Licence 2.0.
+
+### Sponsored development
+Major pieces of development of this add-on has been sponsored by Vaadin customers. Read more about Expert on Demand at: [Support](https://vaadin.com/support) and [Pricing](https://vaadin.com/pricing).
