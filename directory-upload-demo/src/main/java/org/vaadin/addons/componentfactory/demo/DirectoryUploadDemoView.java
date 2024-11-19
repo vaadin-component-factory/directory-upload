@@ -52,7 +52,7 @@ public class DirectoryUploadDemoView extends DemoView {
         return new TemporaryFileFactory().createFile(e);
       }));
       upload.setAutoUpload(false);
-      upload.setPlayButtonVisible(false);
+      upload.setStartButtonVisible(false);
       upload.setRetryButtonVisible(false);
       upload.setMaxConnections(2);
       upload.addFilesSelectedListener(event -> {
