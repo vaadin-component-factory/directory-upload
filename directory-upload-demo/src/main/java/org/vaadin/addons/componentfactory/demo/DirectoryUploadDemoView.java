@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2024 Vaadin Ltd.
+ * Copyright 2024 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -58,8 +58,8 @@ public class DirectoryUploadDemoView extends DemoView {
       upload.addFilesSelectedListener(event -> {
         List<File> files = event.getFiles();
         files.forEach(file -> {
-          if (file.getName().contains("!")) {
-            upload.markFileWithError(file, "contains illegal characters");
+          if (file.getName().contains("400")) {
+            upload.markFileWithError(file, "contains illegal characters<br/>asdfasd ");
           }
         });
       });
