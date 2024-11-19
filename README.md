@@ -4,6 +4,13 @@ This project is a Upload extension that handles uploading of directories, by usi
 
 This component is part of Vaadin Component Factory
 
+## Features
+
+* Supports uploading directories by selecting or dragging and dropping them
+* Concurrent maximum connection control
+* Start and Retry buttons visibility control
+* Server side custom pre-validation definition support 
+
 ## Running the component demo
 Run from the command line:
 - `mvn  -pl directory-upload-demo -Pwar install jetty:run`
@@ -31,6 +38,26 @@ add the following dependency to your `pom.xml`:
     <version>${component.version}</version>
 </dependency>
 ```
+
+## How to Use
+The following example shows how to implement all the features offered by the component:
+
+      final DirectoryUpload upload = new DirectoryUpload(new MultiFileBuffer(e -> {
+        logger.info("File received with path: " + e);
+        return new TemporaryFileFactory().createFile(e);
+      }));
+      upload.setAutoUpload(false);
+      upload.setStartButtonVisible(false);
+      upload.setRetryButtonVisible(false);
+      upload.setMaxConnections(2);
+      upload.addFilesSelectedListener(event -> {
+        List<File> files = event.getFiles();
+        files.forEach(file -> {
+          if (file.getName().contains("400")) {
+            upload.markFileWithError(file, "contains illegal characters<br/>asdfasd ");
+          }
+        });
+      });
 
 ## Flow documentation
 Documentation for flow can be found in [Flow documentation](https://vaadin.com/docs/latest/flow/).
