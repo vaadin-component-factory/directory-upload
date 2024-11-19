@@ -86,25 +86,25 @@ public class DirectoryUpload extends Upload {
   }
   
   /**
-   * Configures the play button for the files to be uploaded visibility
+   * Configures the start button for the files to be uploaded visibility
    * 
-   * @param playButtonVisible true (default) to make the play button visible, false otherwise
+   * @param startButtonVisible true (default) to make the start button visible, false otherwise
    */
-  public void setPlayButtonVisible(final boolean playButtonVisible) {
-    if (playButtonVisible) {
-      this.removeClassName("hide-play-button");
+  public void setStartButtonVisible(final boolean startButtonVisible) {
+    if (startButtonVisible) {
+      this.removeClassName("hide-start-button");
     } else {
-      this.addClassName("hide-play-button");
+      this.addClassName("hide-start-button");
     }
   }
 
   /**
-   * Returns the play button for the files to be uploaded visibility
+   * Returns the start button for the files to be uploaded visibility
    * 
-   * @return true if the play button is visible, false otherwise
+   * @return true if the start button is visible, false otherwise
    */
-  public boolean isPlayButtonVisible() {
-    return !this.hasClassName("hide-play-button");
+  public boolean isStartButtonVisible() {
+    return !this.hasClassName("hide-start-button");
   }
   
   
