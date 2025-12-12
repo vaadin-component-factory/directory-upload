@@ -14,11 +14,13 @@
 package org.vaadin.addons.componentfactory.demo;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.receivers.MultiFileBuffer;
 import com.vaadin.flow.component.upload.receivers.TemporaryFileFactory;
-import com.vaadin.flow.demo.DemoView;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.Lumo;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,54 +32,42 @@ import org.vaadin.addons.componentfactory.directoryupload.File;
  *
  * @author Vaadin Ltd
  */
-@SuppressWarnings("serial")
 @Route("")
-public class DirectoryUploadDemoView extends DemoView {
+@StyleSheet(Lumo.STYLESHEET)
+public class DirectoryUploadDemoView extends VerticalLayout {
 
   private static Logger logger = LoggerFactory.getLogger(DirectoryUploadDemoView.class);
 
-    @Override
-    public void initView() {
-      createBasicDirectoryUploadDemo();
+  public DirectoryUploadDemoView() {
+    createBasicDirectoryUploadDemo();
+  }
 
-    }
+  private void createBasicDirectoryUploadDemo() {
 
-    private void createBasicDirectoryUploadDemo() {
-      final Div message = createMessageDiv("directory-upload-demo-message");
-
-        // begin-source-example
-        // source-example-heading: Simple directory upload
-      final DirectoryUpload upload = new DirectoryUpload(new MultiFileBuffer(e -> {
-        logger.info("File received with path: " + e);
-        return new TemporaryFileFactory().createFile(e);
-      }));
-      upload.setAutoUpload(false);
-      upload.setStartButtonVisible(false);
-      upload.setRetryButtonVisible(false);
-      upload.setMaxConnections(2);
-      upload.addFilesSelectedListener(event -> {
-        List<File> files = event.getFiles();
-        files.forEach(file -> {
-          if (file.getName().contains("400")) {
-            upload.markFileWithError(file, "contains illegal characters<br/>asdfasd ");
-          }
-        });
+    final DirectoryUpload upload = new DirectoryUpload(new MultiFileBuffer(e -> {
+      logger.info("File received with path: " + e);
+      return new TemporaryFileFactory().createFile(e);
+    }));
+    upload.setAutoUpload(false);
+    upload.setStartButtonVisible(false);
+    upload.setRetryButtonVisible(false);
+    upload.setMaxConnections(2);
+    upload.addFilesSelectedListener(event -> {
+      List<File> files = event.getFiles();
+      files.forEach(file -> {
+        if (file.getName().contains("400")) {
+          upload.markFileWithError(file, "contains illegal characters<br/>asdfasd ");
+        }
       });
-        // end-source-example
+    });
 
-        addCard("Simple directory upload", upload, message,
-          new Button("Trigger upload", e -> upload.uploadPendingFiles()));
-    }
+    VerticalLayout demoContainer = new VerticalLayout();
+    demoContainer.add(new H3("Simple directory upload"), upload,
+        new Button("Trigger upload", e -> upload.uploadPendingFiles()));
+    demoContainer.setSpacing(true);
+    demoContainer.setPadding(true);
 
+    add(demoContainer);
+  }
 
-    // begin-source-example
-    // source-example-heading: Additional code used in the demo
-
-    private Div createMessageDiv(final String id) {
-        final Div message = new Div();
-        message.setId(id);
-        message.getStyle().set("whiteSpace", "pre");
-        return message;
-    }
-    // end-source-example
 }
