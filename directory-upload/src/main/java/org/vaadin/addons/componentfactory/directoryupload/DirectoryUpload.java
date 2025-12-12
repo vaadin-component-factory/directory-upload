@@ -22,11 +22,9 @@ import com.vaadin.flow.component.upload.MultiFileReceiver;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
+import tools.jackson.databind.JsonNode;
 
 @SuppressWarnings("serial")
 @JsModule("./directory-upload/directory-upload-mixin.js")
@@ -136,7 +134,7 @@ public class DirectoryUpload extends Upload {
    * @param filesJsonValue
    */
   @ClientCallable
-  public void setFilesToBeUploaded(JsonValue filesJsonValue) {
+  public void setFilesToBeUploaded(JsonNode filesJsonValue) {
     List<File> files = parseJsonToFileList(filesJsonValue);
 
     fireFilesSelectedEvent(files);
@@ -164,16 +162,14 @@ public class DirectoryUpload extends Upload {
       }
   }
   
-  private List<File> parseJsonToFileList(JsonValue jsonValue) {
+  private List<File> parseJsonToFileList(JsonNode jsonNode) {
     List<File> files = new ArrayList<>();
-    if (jsonValue instanceof JsonArray) {
-        JsonArray jsonArray = (JsonArray) jsonValue;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JsonObject jsonObject = jsonArray.getObject(i);
-            String name = jsonObject.getString("name");
-            long size = (long) jsonObject.getNumber("size");
-            String type = jsonObject.getString("type");
-            long lastModified = (long) jsonObject.getNumber("lastModified");
+    if (jsonNode.isArray()) {
+        for (JsonNode fileNode : jsonNode) {
+            String name = fileNode.get("name").asText();
+            long size = fileNode.get("size").asLong();
+            String type = fileNode.get("type").asText();
+            long lastModified = fileNode.get("lastModified").asLong();
 
             File file = new File(name, size, type, lastModified);
             files.add(file);
