@@ -10,7 +10,7 @@
 
     <name>Directory Upload Addon</name>
 
-    <version>2.0.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <inceptionYear>2024</inceptionYear>
     <organization>
         <name>Vaadin Ltd</name>
@@ -18,7 +18,7 @@
     </organization>
 
     <properties>
-        <vaadin.version>25.0.0</vaadin.version>
+        <vaadin.version>25.1.0</vaadin.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>

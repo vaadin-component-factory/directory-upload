@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Vaadin Ltd.
+ * Copyright 2024-2026 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -33,7 +33,6 @@ import org.vaadin.addons.componentfactory.directoryupload.File;
  * @author Vaadin Ltd
  */
 @Route("")
-@StyleSheet(Lumo.STYLESHEET)
 public class DirectoryUploadDemoView extends VerticalLayout {
 
   private static Logger logger = LoggerFactory.getLogger(DirectoryUploadDemoView.class);

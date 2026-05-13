@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Vaadin Ltd.
+ * Copyright 2024-2026 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -20,28 +20,25 @@ import { html, render } from 'lit';
 (function() {
 	window.directoryUploadMixinconnector = {
 		initLazy: (customUpload, maxConnections) => {
-			const MAX_CONNECTIONS = maxConnections;
-            customUpload.queueNext = () => {
-                const numConnections = customUpload.files.filter(file => file.uploading).length;
-                if(numConnections < MAX_CONNECTIONS) {
-                // reverse to pick next in selection order
-                    const nextFileToUpload = customUpload.files.slice().reverse().find(file => file.held)
-                    if (nextFileToUpload) {
-                        customUpload.uploadFiles(nextFileToUpload)
-                    }
+            // Vaadin 25.1 introduced built-in upload queueing with maxConcurrentUploads.
+            // Delegate concurrency control to upstream instead of gating in _uploadFile.
+            customUpload.maxConcurrentUploads = maxConnections;
+
+            // Vaadin 25.1 changed the default uploadFormat to 'raw'. Force 'multipart' so
+            // Flow's FormData-based receivers (e.g. MultiFileBuffer) keep working.
+            customUpload.uploadFormat = 'multipart';
+
+            // Swap the FormData filename for the file's webkitRelativePath so the server
+            // receives the directory-relative path. upload-request fires after upstream
+            // builds the FormData but before xhr.send, so mutating it here is safe.
+            customUpload.addEventListener('upload-request', (e) => {
+                const { file, formData } = e.detail;
+                if (formData && file.webkitRelativePath) {
+                    formData.delete(file.formDataName);
+                    formData.append(file.formDataName, file, file.webkitRelativePath);
                 }
-            }
-            
-            // start uploading next file in queue when a file is successfully uploaded
-            customUpload.addEventListener('upload-success', e => {
-                customUpload.queueNext();
             });
-            
-            // start uploading next file in queue also when there is an error when uploading the file
-            customUpload.addEventListener('upload-error', () => {
-                customUpload.queueNext();
-            });
-            
+
             var serializableArray;
             customUpload.addEventListener('files-changed', (event) => {
                 if (customUpload.noAuto) {
@@ -98,141 +95,7 @@ import { html, render } from 'lit';
                     });
                 }
             });
-            
-			// Override _uploadFile to handle passing of full path from webkitRelativePath
-			customUpload._uploadFile = (file) => {
-                
-                const numConnections = customUpload.files.filter(file => file.uploading).length;
-                if(numConnections >= MAX_CONNECTIONS) {
-                    return;
-                }
-                
-				if (file.uploading) {
-					return;
-				}
 
-				const ini = Date.now();
-				const xhr = (file.xhr = customUpload._createXhr());
-
-				let stalledId, last;
-				// Onprogress is called always after onreadystatechange
-				xhr.upload.onprogress = (e) => {
-					clearTimeout(stalledId);
-
-					last = Date.now();
-					const elapsed = (last - ini) / 1000;
-					const loaded = e.loaded,
-						total = e.total,
-						progress = ~~((loaded / total) * 100);
-					file.loaded = loaded;
-					file.progress = progress;
-					file.indeterminate = loaded <= 0 || loaded >= total;
-
-					if (file.error) {
-						file.indeterminate = file.status = undefined;
-					} else if (!file.abort) {
-						if (progress < 100) {
-							customUpload._setStatus(file, total, loaded, elapsed);
-							stalledId = setTimeout(() => {
-								file.status = customUpload.i18n.uploading.status.stalled;
-								customUpload._renderFileList();
-							}, 2000);
-						} else {
-							file.loadedStr = file.totalStr;
-							file.status = customUpload.i18n.uploading.status.processing;
-						}
-					}
-
-					customUpload._renderFileList();
-					customUpload.dispatchEvent(new CustomEvent('upload-progress', { detail: { file, xhr } }));
-				};
-
-				// More reliable than xhr.onload
-				xhr.onreadystatechange = () => {
-					if (xhr.readyState === 4) {
-						clearTimeout(stalledId);
-						file.indeterminate = file.uploading = false;
-						if (file.abort) {
-							return;
-						}
-						file.status = '';
-						// Custom listener can modify the default behavior either
-						// preventing default, changing the xhr, or setting the file error
-						const evt = customUpload.dispatchEvent(
-							new CustomEvent('upload-response', {
-								detail: { file, xhr },
-								cancelable: true,
-							}),
-						);
-
-						if (!evt) {
-							return;
-						}
-						if (xhr.status === 0) {
-							file.error = customUpload.i18n.uploading.error.serverUnavailable;
-						} else if (xhr.status >= 500) {
-							file.error = customUpload.i18n.uploading.error.unexpectedServerError;
-						} else if (xhr.status >= 400) {
-							file.error = customUpload.i18n.uploading.error.forbidden;
-						}
-
-						file.complete = !file.error;
-						customUpload.dispatchEvent(
-							new CustomEvent(`upload-${file.error ? 'error' : 'success'}`, {
-								detail: { file, xhr },
-							}),
-						);
-						customUpload._renderFileList();
-					}
-				};
-
-				const formData = new FormData();
-
-				if (!file.uploadTarget) {
-					file.uploadTarget = customUpload.target || '';
-				}
-				file.formDataName = customUpload.formDataName;
-
-				const evt = customUpload.dispatchEvent(
-					new CustomEvent('upload-before', {
-						detail: { file, xhr },
-						cancelable: true,
-					}),
-				);
-				if (!evt) {
-					return;
-				}
-				formData.append(file.formDataName, file, file.webkitRelativePath);
-
-				xhr.open(customUpload.method, file.uploadTarget, true);
-				customUpload._configureXhr(xhr);
-
-				file.status = customUpload.i18n.uploading.status.connecting;
-				file.uploading = file.indeterminate = true;
-				file.complete = file.abort = file.error = file.held = false;
-
-				xhr.upload.onloadstart = () => {
-					customUpload.dispatchEvent(
-						new CustomEvent('upload-start', {
-							detail: { file, xhr },
-						}),
-					);
-					customUpload._renderFileList();
-				};
-
-				// Custom listener could modify the xhr just before sending it
-				// preventing default
-				const uploadEvt = customUpload.dispatchEvent(
-					new CustomEvent('upload-request', {
-						detail: { file, xhr, formData },
-						cancelable: true,
-					}),
-				);
-				if (uploadEvt) {
-					xhr.send(formData);
-				}
-			}
-			
 			function transverseDirectory(item) {
 							if (item.isFile) {
 								item.file((file) => {
